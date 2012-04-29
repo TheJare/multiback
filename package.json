@@ -1,0 +1,12 @@
+{
+    "name": "MultiBack"
+  , "version": "0.0.1"
+  , "description": "Example of a Backbone client app with + NodeJS server"
+  , "keywords": []
+  , "author": "Javier Arevalo <jare@iguanademos.com>"
+  , "private": true
+  , "dependencies": {
+      "express": ">= 3.0.0alpha2"
+    , "underscore": "*"
+  }
+}
