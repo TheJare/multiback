@@ -1,15 +1,30 @@
 # Multi Back
 Example of a Backbone client app with NodeJS server
 
-This was my first attempt at playing with Backbone, so take it with a grain of salt. It sort of simulates a chatroom.
+This was my first attempt at playing with Backbone, so take it with a grain of salt. It sort of simulates a chatroom, with 2 simultaenous
+views of the users. Every second, each user updates an internal field and sends a message to a random target user.
 
 To install, type 'npm update' to get the packages, then 'node app.js' to run the server, then point your browser to http://localhost:3000/
+
+## Notes
 
 You can try it without the node backend, just by opening the file static/index.html in your browser. You will get console errors
 when it tries to communicate with the server, but the client side will work.
 
+Server stuff is very limited and straightforward. The node app keeps the user list in a dictionary, listens to get requests on /api/usersCollection/,
+and listens to put/delete requests on /api/usersCollection/{user id}. When the client starts, it fetches the list of current users from the server. When
+a user is created, it sends a post request. When a user is removed, it sends a delete request. Every second, it updates the users and sends put updates for
+the entire collection.
+
+I'm pretty sure the communication with the server should be handled slightly differently, but I don't know how yet. Right now it feels too manual.
+
+The 'Leave' buttons sometimes do not work because every second, the views are refreshed, and the button destroyed and rebuilt; if you have pressed it but
+not released it yet when this happens, the click will fail. It would be nicer to update just the fields of the view that need to change.
+
+I used underscore on the server just for the convenience _.values() function.
+
 ## Credits & License
-(C) Copyright by Javier Arevalo in 2012.
+Copyright by Javier Arevalo in 2012.
 
 - http://www.iguanademos.com/Jare/
 - @TheJare on twitter
@@ -17,7 +32,6 @@ when it tries to communicate with the server, but the client side will work.
 Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 
 ## Attributions
-Based on my hazy memory of a little Flash experiment I saw a while ago, not sure who made it (could be 2D Boy?)
 
 - Client: Uses jQuery, Backbone and Underscore
-- Server: NodeJS, Express, and Underscore
+- Server: Uses NodeJS, Express, and Underscore

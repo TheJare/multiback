@@ -6,7 +6,7 @@
   , "author": "Javier Arevalo <jare@iguanademos.com>"
   , "private": true
   , "dependencies": {
-      "express": ">= 3.0.0alpha2"
+      "express": ">= 2.5.9"
     , "underscore": "*"
   }
 }

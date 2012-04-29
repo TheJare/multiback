@@ -16,6 +16,15 @@ app.get('/api/usersCollection', function(req, res) {
 	console.log(v);
 });
 
+app.post('/api/usersCollection', function(req, res) {
+	console.log("usersCollection api: ", req.method, req.url, req.params, req.body);
+	var uid = _.uniqueId("id_");
+	users[uid] = req.body;
+	users[uid].id = uid;
+	res.send({ id: uid });
+	console.log(users);
+});
+
 app.put('/api/usersCollection/:id', function(req, res) {
 	console.log("usersCollection api: ", req.method, req.url, req.params, req.body);
 	users[req.param('id')] = req.body;
@@ -30,9 +39,10 @@ app.del('/api/usersCollection/:id', function(req, res) {
 	console.log(users);
 });
 
+// -- Log other types of requests
 app.all('/api/*', function(req, res) {
 	console.log("api: ", req.method, req.url, req.params, req.body);
-	res.send("[]");
+	res.send("ERROR");
 });
 
 app.listen(3000)

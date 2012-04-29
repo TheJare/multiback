@@ -32,7 +32,7 @@ $(function() {
 
 	var UsersCollection = Backbone.Collection.extend({
 		NewID: function() {
-			return (this.length == 0)? 0 : (this.max(function(user) { return user.id; })+1);
+			return _.uniqueId("user_");//(this.length == 0)? 0 : (this.max(function(user) { return user.id; })+1);
 		}
 	});
 
@@ -94,7 +94,7 @@ $(function() {
 
 	$("#btnadduser").on("click", function() {
 		var num = usersCollection.NewID();
-		var user = new UserModel({id: num, name: ""+num});
+		var user = new UserModel({/*id: num,*/ name: ""+num});
 		usersCollection.add(user);
 		addUser(user);
 		user.save();
