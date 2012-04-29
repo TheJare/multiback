@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html>
+<!--
+Example of a Backbone client app with NodeJS server
+Copyright by Javier Arevalo in 2012.
+
+- http://www.iguanademos.com/Jare/
+- @TheJare on twitter
+
+Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+-->
 <head><title>MultiBack</title>
 <style type="text/css">
 	.activeusers { border: 1px solid; margin:5px; padding:5px; border-radius:8px; background-color: #EEE;}
@@ -19,11 +28,11 @@
 
 <script type="text/javascript">
 $(function() {
-	// -----
+	// ----- Templates
 	var userTmpl = _.template('<div><div class="it"><%= name %></div></div><div><button id="leave">Leave</button></div><div><div class="it"><%= counter %></div></div><ul><% _.each(chatlines, function(c) { print("<li>"+ c +"</li>"); }); %></ul>');
 	var shortTmpl = _.template('<div><div class="it"><%= name %>/<%= counter %></div></div><div><button id="leave">Leave</button></div>');
 
-	// -----
+	// ----- Models & Collections
 	var UserModel = Backbone.Model.extend({
 		initialize: function() {
 			this.set({counter: 1000, chatlines: []});
@@ -32,11 +41,11 @@ $(function() {
 
 	var UsersCollection = Backbone.Collection.extend({
 		NewID: function() {
-			return _.uniqueId("user_");//(this.length == 0)? 0 : (this.max(function(user) { return user.id; })+1);
+			return _.uniqueId("user_"); // Note this can have duplicates obtained in the initial fetch(), we don't really care here.
 		}
 	});
 
-	// -----
+	// ----- Views
 	var UserView = Backbone.View.extend({
 		tagName: "div",
 		className: "activeuser",
@@ -65,7 +74,7 @@ $(function() {
 		className: "activeusers",
 	});
 
-	// -----
+	// ----- creation of views & coilections
 	var usersView = new UsersView();
 	$(document.body).append(usersView.$el);
 	var usersView2 = new UsersView();
@@ -91,13 +100,14 @@ $(function() {
 	});
 
 	// -----
+	// Our mini-app
 
 	$("#btnadduser").on("click", function() {
 		var num = usersCollection.NewID();
-		var user = new UserModel({/*id: num,*/ name: ""+num});
+		var user = new UserModel({name: ""+num});
 		usersCollection.add(user);
 		addUser(user);
-		user.save();
+		user.save(); // Fresh model, no id, will be created on server
 	});
 
 	$("#btnrmvuser").on("click", function() {
@@ -110,19 +120,26 @@ $(function() {
 	usersCollection.fetch();
 	setInterval(function() {
 		usersCollection.each(function(user) {
-			user.set({counter: user.attributes.counter+1});
+			// Increment counter every tick
+			user.set({counter: user.get('counter')+1});
+			// Random chat
 			var tgt = usersCollection.at(Math.floor(Math.random()*usersCollection.length));
 			if (tgt !== user) {
-				var chat = tgt.attributes.chatlines;
+				var chat = tgt.get('chatlines');
 				if (chat.length >= 5)
 					chat.shift();
-				chat.push(user.attributes.name + " : "+Math.random());
+				chat.push(user.get('name') + " : "+Math.random());
 				tgt.set({chatlines: chat});
 			}
 		});
-		usersCollection.each(function(user) {
-			user.save();
-		});
+		// Bulk update - counter to collection.fetch(). Why no collection.save() in Backbone?
+		if (usersCollection.length)
+			Backbone.sync("update", usersCollection);
+
+		// item-by-item update
+		//usersCollection.each(function(user) {
+		//	user.save();
+		//});
 	}, 1000);
 });
 </script>
